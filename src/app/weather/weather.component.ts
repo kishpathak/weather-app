@@ -10,6 +10,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class WeatherComponent implements OnInit {
   public weatherSearchForm: FormGroup;
   public weatherData: any;
+  public errorDetails: string;
+  public isError: boolean;
   constructor(
     private formBuilder: FormBuilder,
     private weatherService: WeatherService
@@ -19,13 +21,17 @@ export class WeatherComponent implements OnInit {
     this.weatherSearchForm = this.formBuilder.group({
       location: ['']
     });
+    this.errorInitilization(false, undefined);
   }
 
   public sendToAPIXU(formValues: any): void {
     this.weatherService
       .getWeather(formValues.location)
       .subscribe((data: any) => {
+        this.errorInitilization(false, undefined);
         this.weatherData = data;
+      }, (error: any) => {
+        this.errorInitilization(true, 'Unable to fetch the weather information');
       });
   }
 
@@ -36,11 +42,19 @@ export class WeatherComponent implements OnInit {
         this.weatherService
           .getWeatherOnLatLong(pos.coords.latitude , pos.coords.longitude)
           .subscribe((data: any) => {
-            console.log(data);
+            this.errorInitilization(false, undefined);
             this.weatherData = data;
+          }, (error: any) => {
+            this.errorInitilization(true, 'Unable to fetch the weather information');
           });
       });
     }
+  }
+
+  public errorInitilization(isError: boolean, error: string): void {
+    this.isError = isError;
+    this.weatherData = undefined;
+    this.errorDetails = error;
   }
 
 }
