@@ -38,7 +38,6 @@ export class WeatherComponent implements OnInit {
   public findMe(): void {
     if (navigator) {
       navigator.geolocation.getCurrentPosition((pos: any) => {
-        console.log(pos);
         this.weatherService
           .getWeatherOnLatLong(pos.coords.latitude , pos.coords.longitude)
           .subscribe((data: any) => {
